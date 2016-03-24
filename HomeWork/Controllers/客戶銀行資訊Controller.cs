@@ -17,8 +17,37 @@ namespace HomeWork.Controllers
         // GET: 客戶銀行資訊
         public ActionResult Index()
         {
-            var 客戶銀行資訊 = db.客戶銀行資訊.Include(客 => 客.客戶資料);
-            return View(客戶銀行資訊.ToList());
+            //var 客戶銀行資訊 = db.客戶銀行資訊.Include(客 => 客.客戶資料);
+            //return View(客戶銀行資訊.ToList());
+            var listRead = db.客戶銀行資訊.Where(c => c.是否已刪除 != true).ToList();
+            return View(listRead);
+        }
+
+        [HttpPost]
+        public ActionResult Index(string searchWord)
+        {
+            var list = db.客戶銀行資訊.AsQueryable()
+                .Where(c =>
+                      (c.銀行名稱.Contains(searchWord) ||                       
+                       c.帳戶名稱.Contains(searchWord) ||
+                       c.銀行代碼.ToString().Contains(searchWord) ||
+                       c.分行代碼.ToString().Contains(searchWord) ||
+                       c.帳戶號碼.Contains(searchWord))
+                       &&
+                       (c.是否已刪除 != true)
+                       );
+            //int searchWordParse = 0;
+            //if (int.TryParse(searchWord, out searchWordParse))
+            //{
+            //    list = db.客戶銀行資訊.AsQueryable()
+            //    .Where(c =>
+            //          (c.銀行代碼.Contains(searchWord) ||
+            //           c.分行代碼.Contains(searchWord) ||
+            //           &&
+            //           (c.是否已刪除 != true)
+            //           );
+            //}            
+            return View(list);
         }
 
         // GET: 客戶銀行資訊/Details/5
@@ -52,6 +81,7 @@ namespace HomeWork.Controllers
         {
             if (ModelState.IsValid)
             {
+                客戶銀行資訊.是否已刪除 = false;
                 db.客戶銀行資訊.Add(客戶銀行資訊);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -115,7 +145,8 @@ namespace HomeWork.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             客戶銀行資訊 客戶銀行資訊 = db.客戶銀行資訊.Find(id);
-            db.客戶銀行資訊.Remove(客戶銀行資訊);
+            //db.客戶銀行資訊.Remove(客戶銀行資訊);
+            客戶銀行資訊.是否已刪除 = true;
             db.SaveChanges();
             return RedirectToAction("Index");
         }

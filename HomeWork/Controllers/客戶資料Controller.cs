@@ -17,7 +17,26 @@ namespace HomeWork.Controllers
         // GET: 客戶資料
         public ActionResult Index()
         {
-            return View(db.客戶資料.ToList());
+            var listRead = db.客戶資料.Where(c => c.是否已刪除 != true).ToList();
+            return View(listRead);
+        }
+
+        [HttpPost]
+        public ActionResult Index(string searchWord)
+        {
+            var list = db.客戶資料.AsQueryable()
+                .Where(c => 
+                       (c.客戶名稱.Contains(searchWord) ||
+                       c.統一編號.Contains(searchWord) ||
+                       c.電話.Contains(searchWord) ||
+                       c.傳真.Contains(searchWord) ||
+                       c.地址.Contains(searchWord) ||
+                       c.Email.Contains(searchWord))
+                       &&
+                       (c.是否已刪除 != true)
+                       );
+
+            return View(list);
         }
 
         // GET: 客戶資料/Details/5
@@ -50,7 +69,8 @@ namespace HomeWork.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.客戶資料.Add(客戶資料);
+                客戶資料.是否已刪除 = false;
+                db.客戶資料.Add(客戶資料);                
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -96,11 +116,14 @@ namespace HomeWork.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             客戶資料 客戶資料 = db.客戶資料.Find(id);
+
             if (客戶資料 == null)
             {
                 return HttpNotFound();
             }
+
             return View(客戶資料);
         }
 
@@ -110,8 +133,13 @@ namespace HomeWork.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             客戶資料 客戶資料 = db.客戶資料.Find(id);
-            db.客戶資料.Remove(客戶資料);
+            //db.客戶資料.Remove(客戶資料);
+            客戶資料.是否已刪除 = true;
+
+            //客戶資料 客戶資料 = db.Database.ExecuteSqlCommand(@"UPDATE 客戶資料 SET 是否已刪除 = 1 WHERE Id = @Id", );
+
             db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
