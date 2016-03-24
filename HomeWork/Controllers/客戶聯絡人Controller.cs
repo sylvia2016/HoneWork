@@ -32,7 +32,8 @@ namespace HomeWork.Controllers
                        c.姓名.Contains(searchWord) ||
                        c.Email.Contains(searchWord) ||
                        c.手機.Contains(searchWord) ||
-                       c.電話.Contains(searchWord))
+                       c.電話.Contains(searchWord)) ||
+                       c.客戶資料.客戶名稱.Contains(searchWord)
                        &&
                        (c.是否已刪除 != true)
                        );
