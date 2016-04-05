@@ -64,6 +64,15 @@
         </div>
 
         <div class="form-group">
+            @Html.LabelFor(model => model.地區, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.地區, (SelectList)ViewData["sl"], htmlAttributes: new { @class = "form-control" })
+                @*@Html.DropDownList("sl", null, htmlAttributes: new { @class = "form-control" })*@
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="新增" class="btn btn-default" />
             </div>

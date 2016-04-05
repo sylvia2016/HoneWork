@@ -16,6 +16,11 @@ namespace HomeWork.Models
             return this.All().FirstOrDefault(c => c.Id == id);
         }
 
+        public IQueryable<客戶聯絡人> GetData(int id)
+        {
+            return this.All().Where(c => c.客戶Id == id);
+        }
+
         public override void Delete(客戶聯絡人 entity)
         {
             //base.Delete(entity);

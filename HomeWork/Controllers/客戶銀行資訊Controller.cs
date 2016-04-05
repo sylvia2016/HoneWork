@@ -7,6 +7,9 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using HomeWork.Models;
+using NPOI.XSSF.UserModel;
+using System.IO;
+using NPOI.SS.UserModel;
 
 namespace HomeWork.Controllers
 {
@@ -14,6 +17,7 @@ namespace HomeWork.Controllers
     {
         //private 客戶資料Entities1 db = new 客戶資料Entities1();
         客戶銀行資訊Repository repo客戶銀行資訊 = RepositoryHelper.Get客戶銀行資訊Repository();
+        客戶資料Repository repo客戶資料 = RepositoryHelper.Get客戶資料Repository();
 
         // GET: 客戶銀行資訊
         public ActionResult Index()
@@ -144,5 +148,46 @@ namespace HomeWork.Controllers
             }
             base.Dispose(disposing);
         }
+
+        public ActionResult Export()
+        {
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            MemoryStream ms = new MemoryStream();
+
+            // 新增試算表
+            ISheet sheet = workbook.CreateSheet("客戶銀行資訊");
+
+            #region Header   銀行名稱、銀行代碼、分行代碼、帳戶名稱、帳戶號碼、客戶名稱
+            sheet.CreateRow(1).CreateCell(0).SetCellValue("銀行名稱");
+            sheet.GetRow(1).CreateCell(1).SetCellValue("銀行代碼");
+            sheet.GetRow(1).CreateCell(2).SetCellValue("分行代碼");
+            sheet.GetRow(1).CreateCell(3).SetCellValue("帳戶名稱");
+            sheet.GetRow(1).CreateCell(4).SetCellValue("帳戶號碼");
+            sheet.GetRow(1).CreateCell(5).SetCellValue("客戶名稱");
+            #endregion
+
+            List<客戶銀行資訊> list = new List<客戶銀行資訊>();
+            list = repo客戶銀行資訊.All().ToList();
+
+            for (int i = 0; i < list.Count(); i++)
+            {
+                sheet.CreateRow(i + 2).CreateCell(0).SetCellValue(list[i].銀行名稱);
+                sheet.GetRow(i + 2).CreateCell(1).SetCellValue(list[i].銀行代碼);
+                sheet.GetRow(i + 2).CreateCell(2).SetCellValue(list[i].分行代碼.ToString());
+                sheet.GetRow(i + 2).CreateCell(3).SetCellValue(list[i].帳戶名稱);
+                sheet.GetRow(i + 2).CreateCell(4).SetCellValue(list[i].帳戶號碼);
+
+                var CustName = repo客戶資料.Find(list[i].客戶Id).客戶名稱.ToString();
+                sheet.GetRow(i + 2).CreateCell(5).SetCellValue(CustName);
+            }
+
+            workbook.Write(ms);
+            workbook = null;
+            ms.Close();
+            ms.Dispose();
+
+            return File(ms.ToArray(), "application/vnd.ms-excel", "客戶銀行資訊.xls");
+        }
+
     }
 }

@@ -7,6 +7,9 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using HomeWork.Models;
+using NPOI.XSSF.UserModel;
+using System.IO;
+using NPOI.SS.UserModel;
 
 namespace HomeWork.Controllers
 {
@@ -14,6 +17,7 @@ namespace HomeWork.Controllers
     {
         //private 客戶資料Entities1 db = new 客戶資料Entities1();
         客戶聯絡人Repository repo客戶聯絡人 = RepositoryHelper.Get客戶聯絡人Repository();
+        客戶資料Repository repo客戶資料 = RepositoryHelper.Get客戶資料Repository();
 
         // GET: 客戶聯絡人
         public ActionResult Index()
@@ -146,5 +150,46 @@ namespace HomeWork.Controllers
             }
             base.Dispose(disposing);
         }
+
+        public ActionResult Export()
+        {
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            MemoryStream ms = new MemoryStream();
+
+            // 新增試算表
+            ISheet sheet = workbook.CreateSheet("客戶聯絡人");
+
+            #region Header   職稱、姓名、Email、手機、電話、客戶名稱
+            sheet.CreateRow(1).CreateCell(0).SetCellValue("職稱");
+            sheet.GetRow(1).CreateCell(1).SetCellValue("姓名");
+            sheet.GetRow(1).CreateCell(2).SetCellValue("Email");
+            sheet.GetRow(1).CreateCell(3).SetCellValue("手機");
+            sheet.GetRow(1).CreateCell(4).SetCellValue("電話");
+            sheet.GetRow(1).CreateCell(5).SetCellValue("客戶名稱");
+            #endregion
+
+            List<客戶聯絡人> list = new List<客戶聯絡人>();
+            list = repo客戶聯絡人.All().ToList();
+
+            for (int i = 0; i < list.Count(); i++)
+            {
+                sheet.CreateRow(i + 2).CreateCell(0).SetCellValue(list[i].職稱);
+                sheet.GetRow(i + 2).CreateCell(1).SetCellValue(list[i].姓名);
+                sheet.GetRow(i + 2).CreateCell(2).SetCellValue(list[i].Email.ToString());
+                sheet.GetRow(i + 2).CreateCell(3).SetCellValue(list[i].手機);
+                sheet.GetRow(i + 2).CreateCell(4).SetCellValue(list[i].電話);
+
+                var CustName = repo客戶資料.Find(list[i].客戶Id).客戶名稱.ToString();
+                sheet.GetRow(i + 2).CreateCell(5).SetCellValue(CustName);
+            }
+
+            workbook.Write(ms);
+            workbook = null;
+            ms.Close();
+            ms.Dispose();
+
+            return File(ms.ToArray(), "application/vnd.ms-excel", "客戶聯絡人.xls");
+        }
+
     }
 }
