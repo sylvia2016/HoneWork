@@ -29,13 +29,7 @@ namespace HomeWork.Controllers
         [HttpPost]
         public ActionResult Index(string searchWord)
         {
-            var list = repo客戶銀行資訊.All()
-                .Where(c =>
-                      (c.銀行名稱.Contains(searchWord) ||                       
-                       c.帳戶名稱.Contains(searchWord) ||
-                       c.銀行代碼.ToString().Contains(searchWord) ||
-                       c.分行代碼.ToString().Contains(searchWord) ||
-                       c.帳戶號碼.Contains(searchWord)));
+            var list = repo客戶銀行資訊.Search(searchWord);
             return View(list);
         }
 
@@ -57,7 +51,7 @@ namespace HomeWork.Controllers
         // GET: 客戶銀行資訊/Create
         public ActionResult Create()
         {
-            //ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱");
+            ViewBag.客戶Id = new SelectList(repo客戶資料.All(), "Id", "客戶名稱");
             return View();
         }
 
@@ -76,7 +70,7 @@ namespace HomeWork.Controllers
                 return RedirectToAction("Index");
             }
 
-            //ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
+            ViewBag.客戶Id = new SelectList(repo客戶資料.All(), "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
             return View(客戶銀行資訊);
         }
 
@@ -92,7 +86,7 @@ namespace HomeWork.Controllers
             {
                 return HttpNotFound();
             }
-            //ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
+            ViewBag.客戶Id = new SelectList(repo客戶資料.All(), "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
             return View(客戶銀行資訊);
         }
 
@@ -110,7 +104,7 @@ namespace HomeWork.Controllers
                 repo客戶銀行資訊.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
-            //ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
+            ViewBag.客戶Id = new SelectList(repo客戶資料.All(), "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
             return View(客戶銀行資訊);
         }
 
@@ -135,7 +129,7 @@ namespace HomeWork.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             客戶銀行資訊 客戶銀行資訊 = repo客戶銀行資訊.Find(id);
-            客戶銀行資訊.是否已刪除 = true;
+            repo客戶銀行資訊.Delete(客戶銀行資訊);
             repo客戶銀行資訊.UnitOfWork.Commit();
             return RedirectToAction("Index");
         }

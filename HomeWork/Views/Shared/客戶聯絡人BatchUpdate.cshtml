@@ -4,7 +4,7 @@
 
 <h4>客戶聯絡人</h4>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("客戶聯絡人BatchUpdate", "客戶資料"))
 {
     <input type="submit" value="批次更新資料" />
 
@@ -29,11 +29,17 @@
         </tr>
 
         @{
+            //var data = new List<HomeWork.Models.客戶聯絡人>();
+            //if (Model != null)
+            //{
             var data = Model.ToArray();
+            //}
+
         }
 
         @for (var i = 0; i < data.Length; i++)
         {
+            @Html.HiddenFor(modelItem => data[i].Id)
             @Html.HiddenFor(modelItem => data[i].客戶Id)
             <tr>
                 <td>

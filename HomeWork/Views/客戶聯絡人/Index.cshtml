@@ -5,7 +5,11 @@
 }
 
 <h2>客戶聯絡人</h2>
-
+@*<link href="~/Content/jquery.dataTables.css" rel="stylesheet" />
+<script src="~/Content/jquery.dataTables.min.js"></script>
+<script>
+    $("#table").dataTable();
+</script>*@
 <p>
     <table style="width:100%">
         <tr>
@@ -24,7 +28,7 @@
         </tr>
     </table>
 </p>
-<table class="table">
+<table class="table" id="table">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.職稱)

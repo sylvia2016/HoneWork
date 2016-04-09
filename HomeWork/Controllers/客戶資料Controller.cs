@@ -30,17 +30,8 @@ namespace HomeWork.Controllers
         [HttpPost]
         public ActionResult Index(string searchWord)
         {
-            var list = repo客戶資料.All()
-                .Where(c => 
-                       (c.客戶名稱.Contains(searchWord) ||
-                       c.統一編號.Contains(searchWord) ||
-                       c.電話.Contains(searchWord) ||
-                       c.傳真.Contains(searchWord) ||
-                       c.地址.Contains(searchWord) ||
-                       c.Email.Contains(searchWord) ||
-                       c.地區.Contains(searchWord)));
-
-            return View(list);
+            var result = repo客戶資料.Search(searchWord);
+            return View(result);
         }
 
         // GET: 客戶資料/Details/5
@@ -58,15 +49,15 @@ namespace HomeWork.Controllers
             return View(客戶資料);
         }
 
-
-        public ActionResult 客戶聯絡人BatchUpdate(int? id)
+        public ActionResult 客戶聯絡人BatchUpdate(int? 客戶Id)
         {
-            if (id == null)
+            if (客戶Id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ViewData.Model = repo客戶聯絡人.GetData(id.Value);
-            ViewBag.客戶Id = id;
+
+            ViewData.Model = repo客戶聯絡人.GetDataById(客戶Id.Value);
+            ViewBag.客戶Id = 客戶Id;
 
             if (ViewData.Model == null)
             {
@@ -90,15 +81,14 @@ namespace HomeWork.Controllers
                     客戶聯絡人.手機 = item.手機;
                     客戶聯絡人.電話 = item.電話;
                 }
+
                 repo客戶聯絡人.UnitOfWork.Commit();
-
-                //ViewData.Model = repo客戶聯絡人.GetData(ViewBag.客戶Id);
-                //ViewBag.客戶Id = ViewBag.客戶Id;
-
-                return PartialView();
+                TempData["Msg"] = "客戶聯絡人更新成功!";                
             }
-            //ViewData.Model = repo客戶聯絡人.GetData(ViewBag.客戶Id);
-            return View();
+            //ViewData.Model = repo客戶聯絡人.GetDataById(客戶Id.Value);   repo客戶聯絡人.GetData(ViewBag.客戶Id);
+            //ViewBag.客戶Id = ViewBag.客戶Id;
+
+            return RedirectToAction("Index");
         }
 
         // GET: 客戶資料/Create
@@ -203,7 +193,7 @@ namespace HomeWork.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             客戶資料 客戶資料 = repo客戶資料.Find(id);
-            客戶資料.是否已刪除 = true;
+            repo客戶資料.Delete(客戶資料);
             repo客戶資料.UnitOfWork.Commit();
 
             return RedirectToAction("Index");

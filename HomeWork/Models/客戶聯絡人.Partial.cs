@@ -5,27 +5,7 @@ namespace HomeWork.Models
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
 
-    [MetadataType(typeof(客戶聯絡人MetaData))]
-    public partial class 客戶聯絡人 : IValidatableObject
-    {
-        客戶資料Entities1 db = new 客戶資料Entities1();
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            var data = db.客戶聯絡人.Where(c => c.Id != this.Id).AsQueryable();
-            int count = 0;
-
-            if (data.ToList().Count > 0)
-            {
-                count = data.Where(c => c.客戶Id == this.客戶Id && c.Email == this.Email).Count();
-            }
-            
-            if(count > 0)
-            {
-                yield return new ValidationResult("同一客戶下聯絡人的Email不能重複", new string[] { "Email" });
-            }
-        }
-    }
 
     public partial class 客戶聯絡人MetaData
     {
