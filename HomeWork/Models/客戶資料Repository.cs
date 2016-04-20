@@ -12,7 +12,7 @@ namespace HomeWork.Models
         /// <returns></returns>
         public override IQueryable<客戶資料> All()
         {
-            return base.All().Where(c => c.是否已刪除 != true);
+            return base.All().Where(c => c.是否已刪除 != true).OrderBy(c => c.客戶名稱);
         }
 
         /// <summary>
@@ -33,7 +33,9 @@ namespace HomeWork.Models
                                       c.傳真.Contains(searchWord) ||
                                       c.地址.Contains(searchWord) ||
                                       c.Email.Contains(searchWord) ||
-                                      c.地區.Contains(searchWord))).ToList();
+                                      c.地區.Contains(searchWord)))
+                                 .OrderBy(c => c.客戶名稱)
+                                 .ToList();
             }
             
             return queryable.AsQueryable<客戶資料>();

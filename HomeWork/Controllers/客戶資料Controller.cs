@@ -11,6 +11,7 @@ using NPOI.HSSF.UserModel;
 using System.IO;
 using NPOI.XSSF.UserModel;
 using NPOI.SS.UserModel;
+using System.Linq.Expressions;
 
 namespace HomeWork.Controllers
 {
@@ -21,19 +22,39 @@ namespace HomeWork.Controllers
         客戶聯絡人Repository repo客戶聯絡人 = RepositoryHelper.Get客戶聯絡人Repository();
 
         // GET: 客戶資料
-        public ActionResult Index()
+        public ActionResult Index(string searchWord, string SortOrder = "ASC", string SortColumn = "客戶名稱", int Page = 1)
         {
-            var listRead = repo客戶資料.All();
-            return View(listRead);
-        }
-                
-        [HttpPost]
-        public ActionResult Index(string searchWord)
-        {
-            var result = repo客戶資料.Search(searchWord);
+            ViewBag.SortOrder = SortOrder == "ASC" ? "DESC" : "ASC";
+
+            var result = repo客戶資料.All();
+
+            //搜尋
+            if (!string.IsNullOrEmpty(searchWord))
+            {
+                result = repo客戶資料.Search(searchWord);    
+            }
+
+            //排序
+            var param = Expression.Parameter(typeof(客戶資料), "客戶資料");
+            
+            switch (SortOrder)
+            {
+                case "ASC":
+                    var expression = Expression.Lambda<Func<客戶資料, object>>(Expression.Property(param, SortColumn), param);
+                    result = result.OrderBy(expression);
+                    break;
+                case "DESC":
+                    expression = Expression.Lambda<Func<客戶資料, object>>(Expression.Property(param, SortColumn), param);
+                    result = result.OrderByDescending(expression);
+                    break;
+                default:
+                    result = result.OrderBy(c => c.客戶名稱);
+                    break;
+            }
+
             return View(result);
         }
-
+                
         // GET: 客戶資料/Details/5
         public ActionResult Details(int? id)
         {
