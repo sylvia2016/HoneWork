@@ -11,9 +11,13 @@ using NPOI.HSSF.UserModel;
 using System.IO;
 using NPOI.XSSF.UserModel;
 using NPOI.SS.UserModel;
+using System.Web.Security;
+using System.Linq.Expressions;
+using PagedList;
 
 namespace HomeWork.Controllers
 {
+    [ExecuteTimeLog]
     public class 客戶資料Controller : Controller
     {
         private 客戶資料Entities1 db = new 客戶資料Entities1();
@@ -21,20 +25,58 @@ namespace HomeWork.Controllers
         客戶聯絡人Repository repo客戶聯絡人 = RepositoryHelper.Get客戶聯絡人Repository();
 
         // GET: 客戶資料
-        public ActionResult Index()
+        public ActionResult Index(string searchWord, string Sort = "客戶名稱", int Page = 1)
         {
-            var listRead = repo客戶資料.All();
-            return View(listRead);
+            ViewBag.Sort = Sort;
+
+            var result = repo客戶資料.All();
+
+            //搜尋
+            if (!string.IsNullOrEmpty(searchWord))
+            {
+                result = repo客戶資料.Search(searchWord);
+            }
+
+            //排序
+            var param = Expression.Parameter(typeof(客戶資料), "客戶資料");
+
+            if (!string.IsNullOrEmpty(Sort))
+            {
+                if (Sort.Contains("DESC"))
+                {
+                    Sort = Sort.Substring(0, Sort.Length - 5);
+                    var expression = Expression.Lambda<Func<客戶資料, object>>(Expression.Property(param, Sort), param);
+                    result = result.OrderByDescending(expression);
+                }
+                else
+                {
+                    var expression = Expression.Lambda<Func<客戶資料, object>>(Expression.Property(param, Sort), param);
+                    result = result.OrderBy(expression);
+                }
+            }
+            
+            //分頁
+            var data = result.ToPagedList(Page, 3);
+
+            return View(data);
         }
                 
-        [HttpPost]
-        public ActionResult Index(string searchWord)
-        {
-            var result = repo客戶資料.Search(searchWord);
-            return View(result);
-        }
+        //[HttpPost]
+        //[HandleError(ExceptionType = typeof(ArgumentNullException), View = "Error2")]
+        //public ActionResult Index(string searchWord)
+        //{
+        //    if (string.IsNullOrEmpty(searchWord))
+        //    {
+        //        throw new ArgumentNullException("您沒有輸入搜尋關鍵字！");
+        //    }
+                
+
+        //    var result = repo客戶資料.Search(searchWord);
+        //    return View(result);
+        //}
 
         // GET: 客戶資料/Details/5
+
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -113,11 +155,12 @@ namespace HomeWork.Controllers
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email,地區")] 客戶資料 客戶資料)
+        public ActionResult Create([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email,地區,帳號,密碼")] 客戶資料 客戶資料)
         {
             if (ModelState.IsValid)
             {
-                客戶資料.是否已刪除 = false;                
+                客戶資料.是否已刪除 = false;
+                客戶資料.密碼 = FormsAuthentication.HashPasswordForStoringInConfigFile(客戶資料.密碼, "SHA1");
                 repo客戶資料.Add(客戶資料);
                 repo客戶資料.UnitOfWork.Commit();
                 return RedirectToAction("Index");
@@ -157,13 +200,23 @@ namespace HomeWork.Controllers
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email,地區")] 客戶資料 客戶資料)
+        public ActionResult Edit(int? id, FormCollection form)
         {
-            if (ModelState.IsValid)
+            //TODO
+            //要想一下怎麼做：如果已經有密碼了，密碼欄位不要空白！現在暫時先以舊密碼再存回去一次
+            var 客戶資料 = repo客戶資料.Find(id.Value);
+            var oldPassword = 客戶資料.密碼;
+
+            if (TryUpdateModel<客戶資料>(客戶資料, new
+                          string[] { "Id", "客戶名稱", "統一編號", "電話", "傳真", "地址", "Email", "地區", "帳號", "密碼"}))
             {
-                var db客戶資料 = (客戶資料Entities1)repo客戶資料.UnitOfWork.Context;
-                db客戶資料.Entry(客戶資料).State = EntityState.Modified;
+                if (客戶資料.密碼 != null)
+                    客戶資料.密碼 = FormsAuthentication.HashPasswordForStoringInConfigFile(客戶資料.密碼, "SHA1");
+                else
+                    客戶資料.密碼 = oldPassword;  //如果沒有改密碼的話，要把原本的存回去
+
                 repo客戶資料.UnitOfWork.Commit();
+                TempData["Msg"] = 客戶資料.客戶名稱 + " 更新成功!";
                 return RedirectToAction("Index");
             }
             return View(客戶資料);

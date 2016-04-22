@@ -1,85 +1,119 @@
 ﻿@model IEnumerable<HomeWork.Models.客戶資料>
+@using PagedList
+@using PagedList.Mvc
 
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>客戶資料管理</h2>
+@section scripts{
+    <script>
+        function Sort(PressColumn) {
+            debugger;
+            if (PressColumn == "@ViewBag.Sort")
+                $('#Sort').val(PressColumn + " DESC");
+            else
+                $('#Sort').val(PressColumn);
 
-<p>    
-    <table style="width:100%">
-        <tr>
-            <td style="text-align:left">
-                @Html.ActionLink("新增客戶資料", "Create")
-            </td>
-            <td style="text-align:left">
-                @Html.ActionLink("匯出客戶資料", "Export")
-            </td>
-            <td style="text-align:right">
-                @using (Html.BeginForm())
-                {
-                    <input type="text" name="searchWord" value="" />
-                    <input type="submit" value="搜尋" />
-                }
-            </td>
-        </tr>
-    </table>
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.客戶名稱)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.統一編號)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.電話)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.傳真)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.地址)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Email)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.地區)
-        </th>
-        <th></th>
-    </tr>
+            document.form1.submit();
+            return false;
+        }
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.客戶名稱)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.統一編號)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.電話)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.傳真)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.地址)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.地區)
-        </td>
-        <td>
-            @Html.ActionLink("編輯", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("詳細資訊", "Details", new { id=item.Id }) |
-            @Html.ActionLink("刪除", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+        $(function () {
+            $('.pagination a').on('click', function () {
+                var href = $(this).attr('href');
+                var pid = href.substring(href.indexOf('?Page=') + 6);
+                document.form1.Page.value = pid;
+                document.form1.submit();
+                return false;
+            });
+        });
+    </script>
 }
 
-</table>
+<h2>客戶資料管理</h2>
+
+@using (Html.BeginForm("Index", "客戶資料", FormMethod.Get, new { name = "form1" }))
+{
+    <p>
+        <table style="width:100%">
+            <tr>
+                <td style="text-align:left">
+                    @Html.ActionLink("新增客戶資料", "Create")
+                </td>
+                <td style="text-align:left">
+                    @Html.ActionLink("匯出客戶資料", "Export")
+                </td>
+                <td style="text-align:right">
+                    @Html.TextBox("searchWord")
+                    <input type="submit" value="搜尋" />
+                </td>
+            </tr>
+        </table>
+    </p>
+
+    @Html.Hidden("Sort")
+    @Html.Hidden("PressColumn")
+    @Html.Hidden("Page")
+
+    <table class="table">
+        <tr>
+            <th>
+                @Html.ActionLink("客戶名稱", "Index", null, new { @onclick = "return Sort('客戶名稱')" })
+            </th>
+            <th>
+                @Html.ActionLink("統一編號", "Index", null, new { @onclick = "return Sort('統一編號')" })
+            </th>
+            <th>
+                @Html.ActionLink("電話", "Index", null, new { @onclick = "return Sort('電話')" })
+            </th>
+            <th>
+                @Html.ActionLink("傳真", "Index", null, new { @onclick = "return Sort('客戶名稱')" })
+            </th>
+            <th>
+                @Html.ActionLink("地址", "Index", null, new { @onclick = "return Sort('地址')" })
+            </th>
+            <th>
+                @Html.ActionLink("Email", "Index", null, new { @onclick = "return Sort('Email')" })
+            </th>
+            <th>
+                @Html.ActionLink("地區", "Index", null, new { @onclick = "return Sort('地區')" })
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.客戶名稱)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.統一編號)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.電話)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.傳真)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.地址)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.地區)
+                </td>
+                <td>
+                    @Html.ActionLink("編輯", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("詳細資訊", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("刪除", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+
+    </table>
+    @Html.PagedListPager(Model as IPagedList, p => Url.Action("Index", new { Page = p }))
+}

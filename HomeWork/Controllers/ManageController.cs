@@ -304,7 +304,8 @@ namespace HomeWork.Controllers
         public ActionResult LinkLogin(string provider)
         {
             // 要求重新導向至外部登入提供者，以連結目前使用者的登入
-            return new AccountController.ChallengeResult(provider, Url.Action("LinkLoginCallback", "Manage"), User.Identity.GetUserId());
+            //return new AccountController.ChallengeResult(provider, Url.Action("LinkLoginCallback", "Manage"), User.Identity.GetUserId());
+            return RedirectToAction("Index");
         }
 
         //

@@ -39,6 +39,30 @@ namespace HomeWork.Models
             return queryable.AsQueryable<客戶資料>();
         }
 
+        internal void CheckLogin(string account, string password, out string customId, out string role)
+        {
+            var 客戶資料 = this.All().Where(c => c.帳號 == account).FirstOrDefault();
+
+            if (password == 客戶資料.密碼)
+            {
+                if (account == "admin")
+                {
+                    customId = 客戶資料.Id.ToString();
+                    role = "admin";
+                }
+                else
+                {
+                    customId = 客戶資料.Id.ToString();
+                    role = "member";
+                }
+            }
+            else
+            {
+                customId = "";
+                role = "";
+            }
+        }
+
         /// <summary>
         /// 搜尋特定某筆客戶資料
         /// </summary>

@@ -1,7 +1,8 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-	
+using System.Web.Mvc;
+
 namespace HomeWork.Models
 {   
 	public  class 客戶聯絡人Repository : EFRepository<客戶聯絡人>, I客戶聯絡人Repository
@@ -12,7 +13,8 @@ namespace HomeWork.Models
         /// <returns></returns>
         public override IQueryable<客戶聯絡人> All()
         {
-            return base.All().Where(c => c.是否已刪除 != true);
+            var result = base.All().Where(c => c.是否已刪除 != true);
+            return result;
         }
 
         /// <summary>
@@ -36,6 +38,33 @@ namespace HomeWork.Models
             }
 
             return queryable.AsQueryable<客戶聯絡人>();
+        }
+
+        internal IQueryable<客戶聯絡人> Filter(string ddlData)
+        {
+            var queryable = new List<客戶聯絡人>();
+            if (!string.IsNullOrEmpty(ddlData))
+            {
+                queryable = this.All()
+                                .Where(c => c.職稱.Contains(ddlData)).ToList();
+            }
+
+            return queryable.AsQueryable<客戶聯絡人>();
+        }
+
+        internal IQueryable GetDDLdata()
+        {
+            //var result = this.All().Select(c => new SelectListItem { Text = c.職稱 }).Distinct();
+            //var result = this.All().Select(c => c.職稱).Distinct();  //撈出來的資料沒有標題的寫法
+            var result = this.All().Select(c => new { c.職稱 }).Distinct();
+
+            //string[] array = new string[result.Count()+1];
+            //array[0] = "nothing";
+            //for (int i = 0; i < result.Count(); i++)
+            //{
+            //    array[i+1] = result.ToString();
+            //}
+            return result;
         }
 
         /// <summary>
