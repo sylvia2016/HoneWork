@@ -302,6 +302,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="ICSharpCode.SharpZipLib.dll" />
     <Content Include="Models\CustomerData.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>CustomerData.edmx</DependentUpon>
@@ -320,6 +321,10 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>IRepository.EF6.cs</LastGenOutput>
     </Content>
+    <Content Include="NPOI.dll" />
+    <Content Include="NPOI.OOXML.dll" />
+    <Content Include="NPOI.OpenXml4Net.dll" />
+    <Content Include="NPOI.OpenXmlFormats.dll" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <EntityDeploy Include="Models\CustomerData.edmx">

@@ -58,7 +58,7 @@
           <Property Name="是否已刪除" Type="bit" />
         </EntityType>
         <!--產生期間發現錯誤:
-警告 6002: 資料表/檢視 'D:\SYLVIA\1DATA\9NEXT\NEXT課程\HOMEWORK\HOMEWORK\APP_DATA\客戶資料.MDF.dbo.清單檢視表' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
+警告 6002: 資料表/檢視 'C:\USERS\SYLVIA\SOURCE\REPOS\HONEWORK\HOMEWORK\APP_DATA\客戶資料.MDF.dbo.清單檢視表' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
         <EntityType Name="清單檢視表">
           <Key>
             <PropertyRef Name="Id" />
