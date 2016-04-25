@@ -4,15 +4,15 @@
     ViewBag.Title = "Login";
 }
 
-<h2>Login</h2>
-
+<br />
+<br />
 
 @using (Html.BeginForm()) 
 {
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
-        <h4>LoginViewModel</h4>
+        <h1>登入</h1>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
@@ -43,9 +43,13 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="登入" class="btn btn-default" />
             </div>
         </div>
+    </div>
+
+    <div style="text-align:right">
+        <img src="http://4.bp.blogspot.com/-Yx0LBOy-nWU/VYI62YNbZzI/AAAAAAAC5qE/TSvXssGaGBk/s1600/6112310.gif" />
     </div>
 }
 

@@ -6,31 +6,6 @@
     ViewBag.Title = "Index";
 }
 
-@section scripts{
-    <script>
-        function Sort(PressColumn) {
-            debugger;
-            if (PressColumn == "@ViewBag.Sort")
-                $('#Sort').val(PressColumn + " DESC");
-            else
-                $('#Sort').val(PressColumn);
-
-            document.form1.submit();
-            return false;
-        }
-
-        $(function () {
-            $('.pagination a').on('click', function () {
-                var href = $(this).attr('href');
-                var pid = href.substring(href.indexOf('?Page=') + 6);
-                document.form1.Page.value = pid;
-                document.form1.submit();
-                return false;
-            });
-        });
-    </script>
-}
-
 <h2>客戶資料管理</h2>
 
 @using (Html.BeginForm("Index", "客戶資料", FormMethod.Get, new { name = "form1" }))
@@ -53,7 +28,6 @@
     </p>
 
     @Html.Hidden("Sort")
-    @Html.Hidden("PressColumn")
     @Html.Hidden("Page")
 
     <table class="table">
@@ -116,4 +90,29 @@
 
     </table>
     @Html.PagedListPager(Model as IPagedList, p => Url.Action("Index", new { Page = p }))
+}
+
+@section scripts{
+    <script>
+        function Sort(PressColumn) {
+            //debugger;
+            if (PressColumn == "@ViewBag.Sort")
+                $('#Sort').val(PressColumn + " DESC");
+            else
+                $('#Sort').val(PressColumn);
+
+            document.form1.submit();
+            return false;
+        }
+
+        $(function () {
+            $('.pagination a').on('click', function () {
+                var href = $(this).attr('href');
+                var pid = href.substring(href.indexOf('?Page=') + 6);
+                document.form1.Page.value = pid;
+                document.form1.submit();
+                return false;
+            });
+        });
+    </script>
 }

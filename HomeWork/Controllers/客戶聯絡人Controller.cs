@@ -13,6 +13,7 @@ using NPOI.SS.UserModel;
 
 namespace HomeWork.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class 客戶聯絡人Controller : Controller
     {
         //private 客戶資料Entities1 db = new 客戶資料Entities1();
@@ -20,26 +21,26 @@ namespace HomeWork.Controllers
         客戶資料Repository repo客戶資料 = RepositoryHelper.Get客戶資料Repository();
 
         // GET: 客戶聯絡人
-        public ActionResult Index()
+        public ActionResult Index(string searchWord, string ddl職稱)
         {
-            var listRead = repo客戶聯絡人.All();
+            var result = repo客戶聯絡人.Search(searchWord);
             var data = repo客戶聯絡人.GetDDLdata();
             SelectList listData = new SelectList(data, "職稱", "職稱");
             ViewBag.ddl職稱 = listData;
-            return View(listRead);
+            return View(result);
         }
 
-        [HttpPost]
-        public ActionResult Index(string searchWord, string ddlData)
-        {
-            //TODO
-            //下拉選單篩選資料還沒寫
-            var list = repo客戶聯絡人.Search(searchWord);
-            var data = repo客戶聯絡人.GetDDLdata();
-            SelectList listData = new SelectList(data, "職稱", "職稱");
-            ViewBag.ddl職稱 = listData;
-            return View(list);
-        }
+        //[HttpPost]
+        //public ActionResult Index(string searchWord, string ddlData)
+        //{
+        //    //TODO
+        //    //下拉選單篩選資料還沒寫
+        //    var list = repo客戶聯絡人.Search(searchWord);
+        //    var data = repo客戶聯絡人.GetDDLdata();
+        //    SelectList listData = new SelectList(data, "職稱", "職稱");
+        //    ViewBag.ddl職稱 = listData;
+        //    return View(list);
+        //}
 
         // GET: 客戶聯絡人/Details/5
         public ActionResult Details(int? id)

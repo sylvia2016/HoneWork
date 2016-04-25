@@ -13,6 +13,7 @@ using NPOI.SS.UserModel;
 
 namespace HomeWork.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class 客戶銀行資訊Controller : Controller
     {
         //private 客戶資料Entities1 db = new 客戶資料Entities1();

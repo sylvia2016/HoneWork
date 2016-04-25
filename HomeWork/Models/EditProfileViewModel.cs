@@ -1,4 +1,4 @@
-﻿namespace HomeWork.Controllers
+﻿namespace HomeWork.Models
 {
     public class EditProfileViewModel
     {

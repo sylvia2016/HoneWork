@@ -23,6 +23,7 @@ namespace HomeWork.Models
         public IQueryable<客戶資料> Search(string searchWord)
         {
             var queryable = new List<客戶資料>();
+
             if (!string.IsNullOrEmpty(searchWord))
             {
                 queryable = this.All()
@@ -36,6 +37,10 @@ namespace HomeWork.Models
                                       c.地區.Contains(searchWord)))
                                  .OrderBy(c => c.客戶名稱)
                                  .ToList();
+            }
+            else
+            {
+                queryable = this.All().OrderBy(c => c.客戶名稱).ToList();
             }
             
             return queryable.AsQueryable<客戶資料>();

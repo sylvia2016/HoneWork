@@ -8,10 +8,12 @@ using System.Web.Security;
 
 namespace HomeWork.Controllers
 {
+    [Authorize]
     public class AccountController : Controller
     {
-        string gUserData = "";
-        string GCustomId = "";
+        客戶資料Repository repo客戶資料 = RepositoryHelper.Get客戶資料Repository();
+        string UserData = "";
+        string CustomId = "";
 
         [AllowAnonymous]
         public ActionResult Login()
@@ -30,12 +32,14 @@ namespace HomeWork.Controllers
                 // 將管理者登入的 Cookie 設定成 Session Cookie
                 bool isPersistent = false;
 
+
+
                 FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(1,
                   data.Account,
                   DateTime.Now,
                   DateTime.Now.AddMinutes(30),
                   isPersistent,
-                  gUserData,
+                  UserData,
                   FormsAuthentication.FormsCookiePath);
 
                 string encTicket = FormsAuthentication.Encrypt(ticket);
@@ -43,7 +47,10 @@ namespace HomeWork.Controllers
                 // Create the cookie.
                 Response.Cookies.Add(new HttpCookie(FormsAuthentication.FormsCookieName, encTicket));
 
-                return RedirectToAction("Index", "Home");
+                if(UserData == "member")
+                    return RedirectToAction("Edit", "客戶資料", new { id = CustomId });
+                else
+                    return RedirectToAction("Index", "Home");
             }
             else
             {
@@ -56,11 +63,11 @@ namespace HomeWork.Controllers
         {
             string customId;
             string role;
-            客戶資料Repository repo客戶資料 = RepositoryHelper.Get客戶資料Repository();
+            
             repo客戶資料.CheckLogin(account, password, out customId, out role);
 
-            gUserData = role;
-            GCustomId = customId;
+            UserData = role;
+            CustomId = customId;
 
             if (string.IsNullOrEmpty(customId))
                 return false;

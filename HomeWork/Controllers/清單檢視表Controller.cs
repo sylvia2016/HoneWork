@@ -7,6 +7,7 @@ using System.Web.Mvc;
 
 namespace HomeWork.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class 清單檢視表Controller : Controller
     {
         客戶資料Entities1 db = new 客戶資料Entities1();

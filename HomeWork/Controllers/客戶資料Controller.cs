@@ -25,17 +25,13 @@ namespace HomeWork.Controllers
         客戶聯絡人Repository repo客戶聯絡人 = RepositoryHelper.Get客戶聯絡人Repository();
 
         // GET: 客戶資料
+        [Authorize(Roles = "admin")]
         public ActionResult Index(string searchWord, string Sort = "客戶名稱", int Page = 1)
         {
             ViewBag.Sort = Sort;
 
-            var result = repo客戶資料.All();
-
             //搜尋
-            if (!string.IsNullOrEmpty(searchWord))
-            {
-                result = repo客戶資料.Search(searchWord);
-            }
+            var result = repo客戶資料.Search(searchWord);
 
             //排序
             var param = Expression.Parameter(typeof(客戶資料), "客戶資料");
@@ -60,7 +56,7 @@ namespace HomeWork.Controllers
 
             return View(data);
         }
-                
+
         //[HttpPost]
         //[HandleError(ExceptionType = typeof(ArgumentNullException), View = "Error2")]
         //public ActionResult Index(string searchWord)
@@ -69,7 +65,7 @@ namespace HomeWork.Controllers
         //    {
         //        throw new ArgumentNullException("您沒有輸入搜尋關鍵字！");
         //    }
-                
+
 
         //    var result = repo客戶資料.Search(searchWord);
         //    return View(result);
@@ -77,6 +73,7 @@ namespace HomeWork.Controllers
 
         // GET: 客戶資料/Details/5
 
+        [Authorize(Roles = "admin")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -91,6 +88,7 @@ namespace HomeWork.Controllers
             return View(客戶資料);
         }
 
+        [Authorize(Roles = "admin")]
         public ActionResult 客戶聯絡人BatchUpdate(int? 客戶Id)
         {
             if (客戶Id == null)
@@ -108,6 +106,7 @@ namespace HomeWork.Controllers
             return PartialView();
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public ActionResult 客戶聯絡人BatchUpdate(IList<客戶聯絡人Batch> data)
         {
@@ -134,6 +133,7 @@ namespace HomeWork.Controllers
         }
 
         // GET: 客戶資料/Create
+        [Authorize(Roles = "admin")]
         public ActionResult Create()
         {
             #region 下拉選單塞值
@@ -153,6 +153,7 @@ namespace HomeWork.Controllers
         // POST: 客戶資料/Create
         // 若要免於過量張貼攻擊，請啟用想要繫結的特定屬性，如需
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email,地區,帳號,密碼")] 客戶資料 客戶資料)
@@ -170,6 +171,7 @@ namespace HomeWork.Controllers
         }
 
         // GET: 客戶資料/Edit/5
+        [Authorize]
         public ActionResult Edit(int? id)
         {
             #region 下拉選單塞值
@@ -198,6 +200,7 @@ namespace HomeWork.Controllers
         // POST: 客戶資料/Edit/5
         // 若要免於過量張貼攻擊，請啟用想要繫結的特定屬性，如需
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int? id, FormCollection form)
@@ -223,6 +226,7 @@ namespace HomeWork.Controllers
         }
 
         // GET: 客戶資料/Delete/5
+        [Authorize(Roles = "admin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -241,6 +245,7 @@ namespace HomeWork.Controllers
         }
 
         // POST: 客戶資料/Delete/5
+        [Authorize(Roles = "admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
@@ -252,6 +257,7 @@ namespace HomeWork.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "admin")]
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -25,6 +25,7 @@ namespace HomeWork.Models
         public IQueryable<客戶聯絡人> Search(string searchWord)
         {
             var queryable = new List<客戶聯絡人>();
+
             if (!string.IsNullOrEmpty(searchWord))
             {
                 queryable = this.All()
@@ -35,6 +36,10 @@ namespace HomeWork.Models
                                        c.手機.Contains(searchWord) ||
                                        c.電話.Contains(searchWord) ||
                                        c.客戶資料.客戶名稱.Contains(searchWord))).ToList();
+            }
+            else
+            {
+                queryable = this.All().OrderBy(c => c.姓名).ToList();
             }
 
             return queryable.AsQueryable<客戶聯絡人>();

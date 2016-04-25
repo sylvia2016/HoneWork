@@ -7,7 +7,7 @@
 
     <ul class="nav navbar-nav navbar-right">
         <li>
-            @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "EditProfile", "Account")
+            @Html.ActionLink(User.Identity.GetUserName(), "EditProfile", "Account")
         </li>
         <li>@Html.ActionLink("登出", "Logout", "Account")</li>
     </ul>
