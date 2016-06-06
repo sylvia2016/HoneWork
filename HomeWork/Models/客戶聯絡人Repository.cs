@@ -13,7 +13,7 @@ namespace HomeWork.Models
         /// <returns></returns>
         public override IQueryable<客戶聯絡人> All()
         {
-            var result = base.All().Where(c => c.是否已刪除 != true);
+            var result = base.All().Where(c => c.是否已刪除 != true).OrderBy(c => c.職稱);
             return result;
         }
 
@@ -35,11 +35,12 @@ namespace HomeWork.Models
                                        c.Email.Contains(searchWord) ||
                                        c.手機.Contains(searchWord) ||
                                        c.電話.Contains(searchWord) ||
-                                       c.客戶資料.客戶名稱.Contains(searchWord))).ToList();
+                                       c.客戶資料.客戶名稱.Contains(searchWord)))                                
+                                .ToList();
             }
             else
             {
-                queryable = this.All().OrderBy(c => c.姓名).ToList();
+                queryable = this.All().ToList();
             }
 
             return queryable.AsQueryable<客戶聯絡人>();
@@ -48,10 +49,16 @@ namespace HomeWork.Models
         internal IQueryable<客戶聯絡人> Filter(string ddlData)
         {
             var queryable = new List<客戶聯絡人>();
+
             if (!string.IsNullOrEmpty(ddlData))
             {
                 queryable = this.All()
-                                .Where(c => c.職稱.Contains(ddlData)).ToList();
+                                .Where(c => c.職稱.Contains(ddlData))
+                                .ToList();
+            }
+            else
+            {
+                queryable = this.All().ToList();
             }
 
             return queryable.AsQueryable<客戶聯絡人>();
@@ -59,16 +66,7 @@ namespace HomeWork.Models
 
         internal IQueryable GetDDLdata()
         {
-            //var result = this.All().Select(c => new SelectListItem { Text = c.職稱 }).Distinct();
-            //var result = this.All().Select(c => c.職稱).Distinct();  //撈出來的資料沒有標題的寫法
             var result = this.All().Select(c => new { c.職稱 }).Distinct();
-
-            //string[] array = new string[result.Count()+1];
-            //array[0] = "nothing";
-            //for (int i = 0; i < result.Count(); i++)
-            //{
-            //    array[i+1] = result.ToString();
-            //}
             return result;
         }
 

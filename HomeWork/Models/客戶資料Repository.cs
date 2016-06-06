@@ -35,12 +35,11 @@ namespace HomeWork.Models
                                       c.地址.Contains(searchWord) ||
                                       c.Email.Contains(searchWord) ||
                                       c.地區.Contains(searchWord)))
-                                 .OrderBy(c => c.客戶名稱)
-                                 .ToList();
+                                .ToList();
             }
             else
             {
-                queryable = this.All().OrderBy(c => c.客戶名稱).ToList();
+                queryable = this.All().ToList();
             }
             
             return queryable.AsQueryable<客戶資料>();

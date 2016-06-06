@@ -23,24 +23,19 @@ namespace HomeWork.Controllers
         // GET: 客戶聯絡人
         public ActionResult Index(string searchWord, string ddl職稱)
         {
-            var result = repo客戶聯絡人.Search(searchWord);
+            //下拉選單資料
             var data = repo客戶聯絡人.GetDDLdata();
             SelectList listData = new SelectList(data, "職稱", "職稱");
-            ViewBag.ddl職稱 = listData;
+            ViewBag.ddl職稱 = listData;  //給下拉選單抓資料用，名稱要與下拉選單名稱相同
+            
+            //搜尋
+            var result = repo客戶聯絡人.Search(searchWord);
+
+            //用下拉資料做篩選
+            result = repo客戶聯絡人.Filter(ddl職稱);
+
             return View(result);
         }
-
-        //[HttpPost]
-        //public ActionResult Index(string searchWord, string ddlData)
-        //{
-        //    //TODO
-        //    //下拉選單篩選資料還沒寫
-        //    var list = repo客戶聯絡人.Search(searchWord);
-        //    var data = repo客戶聯絡人.GetDDLdata();
-        //    SelectList listData = new SelectList(data, "職稱", "職稱");
-        //    ViewBag.ddl職稱 = listData;
-        //    return View(list);
-        //}
 
         // GET: 客戶聯絡人/Details/5
         public ActionResult Details(int? id)
